@@ -420,12 +420,11 @@
             carousel.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
         }
 
-        // Auto-advance carousel every 5 seconds
+        // Carrusel de fotos avanza cada 5 segundos
         setInterval(() => {
             moveCarousel(1);
         }, 5000);
 
-        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
