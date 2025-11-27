@@ -21,7 +21,7 @@ class ColorimetryAnalyzer:
             cascade_path + 'haarcascade_eye.xml'
         )
         
-        # ✨ PALETAS PROFESIONALES CORRECTAS (códigos HEX)
+        #  PALETAS PROFESIONALES CORRECTAS (códigos HEX)
         self.paletas = {
             "Primavera": {
                 "colores": [
@@ -84,57 +84,57 @@ class ColorimetryAnalyzer:
     def analyze_image(self, image_path):
         """Pipeline completo de análisis profesional"""
         try:
-            print(f"📸 Cargando imagen: {image_path}")
+            print(f" Cargando imagen: {image_path}")
             img = cv2.imread(image_path)
             if img is None:
-                print("❌ No se pudo cargar la imagen")
+                print(" No se pudo cargar la imagen")
                 return self._get_default_result()
             
             # 1. Normalización de iluminación
-            print("💡 Normalizando iluminación...")
+            print(" Normalizando iluminación...")
             img = self._normalize_illumination(img)
             
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
             
             if len(faces) == 0:
-                print("❌ No se detectó rostro")
+                print(" No se detectó rostro")
                 return self._get_default_result()
             
-            print(f"✅ Rostro detectado: {len(faces)} cara(s)")
+            print(f" Rostro detectado: {len(faces)} cara(s)")
             (x, y, w, h) = faces[0]
             face_roi = img[y:y+h, x:x+w]
             gray_face = gray[y:y+h, x:x+w]
             
             # 2. Análisis de PIEL
-            print("👤 Analizando tono de piel...")
+            print(" Analizando tono de piel...")
             skin_tone, skin_lightness, skin_lab = self._analyze_skin_tone_cielab(face_roi)
             print(f"   Piel: {skin_tone} (L={int(skin_lightness)})")
             
             # 3. Análisis de OJOS
-            print("👁️  Analizando color de ojos...")
+            print("  Analizando color de ojos...")
             eye_analysis = self._analyze_eye_color(face_roi, gray_face)
             eye_category = self._categorize_eye_color(eye_analysis)
             print(f"   Ojos: {eye_category}")
             
             # 4. Análisis de CABELLO
-            print("💇 Analizando color de cabello...")
+            print(" Analizando color de cabello...")
             hair_color = self._analyze_hair_color(img, (x, y, w, h))
             hair_category = self._categorize_hair_color(hair_color)
             print(f"   Cabello: {hair_category}")
             
             # 5. Cálculo de CONTRASTE y SATURACIÓN
-            print("📊 Calculando contraste y saturación...")
+            print(" Calculando contraste y saturación...")
             contrast = self._calculate_contrast(skin_lightness, eye_analysis, hair_color)
             saturation = self._calculate_saturation(eye_analysis, hair_color)
             print(f"   Contraste: {contrast}, Saturación: {saturation}")
             
             # 6. CLASIFICACIÓN EN ESTACIÓN
-            print("🎨 Clasificando en estación...")
+            print(" Clasificando en estación...")
             season = self._classify_season_professional(
                 skin_tone, eye_analysis, hair_color, contrast, saturation
             )
-            print(f"✅ RESULTADO: {season}")
+            print(f" RESULTADO: {season}")
             
             return {
                 'season': season,
@@ -172,7 +172,7 @@ class ColorimetryAnalyzer:
             }
             
         except Exception as e:
-            print(f"❌ Error crítico: {e}")
+            print(f" Error crítico: {e}")
             import traceback
             traceback.print_exc()
             return self._get_default_result()
