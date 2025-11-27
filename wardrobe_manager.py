@@ -6,7 +6,6 @@ class WardrobeManager:
     """
     Sistema de gestión de armario virtual del usuario.
     Permite agregar, editar, eliminar y consultar prendas.
-    AHORA CON SOPORTE DE IMÁGENES.
     """
     
     def __init__(self, user_email):
