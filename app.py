@@ -126,17 +126,17 @@ def get_user_history(user_email):
 def load_clima_data():
     """Carga datos climáticos desde Excel"""
     try:
-        # Intenta la carga con la ruta relativa
+        # Carga datos
         df = pd.read_excel('data/clima_provincias.xlsx')
-        print("✅ DEBUG: Archivo clima_provincias.xlsx cargado con éxito.")
+        print(" DEBUG: Archivo clima_provincias.xlsx cargado con éxito.")
         return df
     except FileNotFoundError:
         # Se activa si el archivo no se encuentra en la ruta esperada
-        print("⚠️ Archivo clima_provincias.xlsx no encontrado (Fallo en la ruta).")
+        print(" Archivo clima_provincias.xlsx no encontrado (Fallo en la ruta).")
         return None
     except Exception as e:
-        # ¡ESTA ES LA CLAVE! Captura y muestra cualquier otro error (ej. formato, permisos, etc.)
-        print(f"❌ ERROR CRÍTICO al cargar clima_provincias.xlsx. Causa: {e}")
+        # En caso de que no se cargue el excel
+        print(f" ERROR CRÍTICO al cargar clima_provincias.xlsx. Causa: {e}")
         return None
 
 def get_clima_info(provincia, mes):
@@ -158,11 +158,6 @@ def get_clima_info(provincia, mes):
         'Octubre': {'temperatura': 18, 'prob_lluvia': 50},
         'Noviembre': {'temperatura': 13, 'prob_lluvia': 60}
     }
-    
-    # Ajustes específicos por provincia (A Coruña es más fría y lluviosa)
-    if 'Coruña' in provincia or 'A Coruña' in provincia:
-        defaults_by_month = {k: {'temperatura': v['temperatura'] - 1, 'prob_lluvia': min(v['prob_lluvia'] + 10, 80)} 
-                            for k, v in defaults_by_month.items()}
     
     if df is None:
         return defaults_by_month.get(mes, {"temperatura": 18, "prob_lluvia": 40})
@@ -337,13 +332,12 @@ def detectar_preferencia_masculina(no_vestidos, no_faldas, no_tops, genero=None)
     
     CRITERIOS:
     - Marca NO vestidos + NO faldas + NO tops = Preferencia masculina
-    - O género explícito = "Hombre"
     """
     if genero and genero.lower() == 'hombre':
         return True
     
     if no_vestidos and no_faldas and no_tops:
-        print(f"   🚹 Preferencia MASCULINA detectada (no vestidos + no faldas + no tops)")
+        print(f"    Preferencia MASCULINA detectada (no vestidos + no faldas + no tops)")
         return True
     
     return False
@@ -353,7 +347,7 @@ def filtrar_prendas_femeninas(items, categoria):
     Filtra prendas consideradas femeninas de una lista.
     
     CALZADO FEMENINO:
-    - tacones, stilettos, alpargatas (con tacón), sandalias
+    - tacones, alpargatas (con tacón), sandalias
     
     COMPLEMENTOS FEMENINOS:
     - bolso, bolsa, cartera (de mano)
@@ -362,9 +356,8 @@ def filtrar_prendas_femeninas(items, categoria):
     """
     
     palabras_femeninas = {
-        'calzado': ['tacón', 'tacones', 'stiletto', 'alpargata', 'sandalia'],
-        'complemento': ['bolso', 'bolsa', 'cartera', 'collar', 'pendiente', 
-                       'arete', 'diadema', 'horquilla', 'pañuelo']
+        'calzado': ['alpargata', 'sandalia'],
+        'complemento': ['bolso', 'bolsa', 'cartera', 'collar', 'pendiente', 'diadema', 'horquilla', 'pañuelo']
     }
     
     if categoria not in palabras_femeninas:
@@ -380,7 +373,7 @@ def filtrar_prendas_femeninas(items, categoria):
         if not es_femenina:
             filtradas.append(item)
         else:
-            print(f"   🚫 Filtrado (femenino): {item.get('nombre')}")
+            print(f"    Filtrado (femenino): {item.get('nombre')}")
     
     return filtradas
 
@@ -434,7 +427,7 @@ def generate_smart_outfit(user_items, db_items, ocasion, clima, temperatura, pro
         if clima.lower() not in [c.lower() for c in item_climas]:
             return False
         
-        # Estación - opcional
+        # Estación 
         if 'estacion' in item:
             item_estaciones = item.get('estacion', [])
             if isinstance(item_estaciones, str):
@@ -473,7 +466,7 @@ def generate_smart_outfit(user_items, db_items, ocasion, clima, temperatura, pro
             words = color_name.lower().split()
             palette_keywords.update(words)
         
-        # Contar coincidencias (case insensitive)
+        # Contar coincidencias
         matches = sum(1 for item_color in item_colors 
                      if any(kw in item_color.lower() for kw in palette_keywords))
         
@@ -546,7 +539,7 @@ def generate_smart_outfit(user_items, db_items, ocasion, clima, temperatura, pro
         botas = [item for item in calzados_usuario if 'bota' in item.get('nombre', '').lower()]
         if botas:
             calzados_usuario = botas
-            print(f"   ☔ Lluvia {prob_lluvia}% → Botas")
+            print(f"    Lluvia {prob_lluvia}% → Botas")
     
     if calzados_usuario:
         calzados_usuario.sort(key=lambda x: color_match_score(x, palette_colors), reverse=True)
@@ -566,7 +559,7 @@ def generate_smart_outfit(user_items, db_items, ocasion, clima, temperatura, pro
     complementos_usuario = [item for item in user_items 
                            if item.get('tipo') == 'complemento' and match_item(item, ocasion, clima, estacion, palette_colors)]
     
-    # FILTRAR COMPLEMENTOS FEMENINOS si preferencia masculina
+    # FILTRAR COMPLEMENTOS FEMENINOS si hay preferencia masculina
     if preferencia_masculina:
         complementos_usuario = filtrar_prendas_femeninas(complementos_usuario, 'complemento')
     
@@ -575,7 +568,7 @@ def generate_smart_outfit(user_items, db_items, ocasion, clima, temperatura, pro
                     if 'bufanda' in item.get('nombre', '').lower() or 'gorro' in item.get('nombre', '').lower()]
         if abrigados:
             complementos_usuario = abrigados
-            print(f"   ❄️ Frío {temperatura}°C → Bufanda/gorro")
+            print(f"    Frío {temperatura}°C → Bufanda/gorro")
     
     if complementos_usuario:
         complementos_usuario.sort(key=lambda x: color_match_score(x, palette_colors), reverse=True)
@@ -619,9 +612,9 @@ def onboarding():
                 photo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 photo.save(photo_path)
                 
-                print("🔍 Analizando colorimetría...")
+                print(" Analizando colorimetría...")
                 colorimetry_result = colorimetry_analyzer.analyze_image(photo_path)
-                print(f"✅ Análisis completado: {colorimetry_result['season']}")
+                print(f" Análisis completado: {colorimetry_result['season']}")
                 
                 # Guardar colorimetría para futuras consultas
                 save_user_colorimetry(user_email, colorimetry_result)
@@ -629,9 +622,9 @@ def onboarding():
         if colorimetry_result is None:
             # Si no hay foto ni guardada, usar valores por defecto
             colorimetry_result = colorimetry_analyzer._get_default_result()
-            print("⚠️ Usando colorimetría por defecto")
+            print(" Usando colorimetría por defecto")
         else:
-            print(f"📁 Usando colorimetría guardada: {colorimetry_result['season']}")
+            print(f" Usando colorimetría guardada: {colorimetry_result['season']}")
         
         # Obtener clima
         clima_info = get_clima_info(data.get('provincia'), data.get('mes'))
@@ -648,16 +641,16 @@ def onboarding():
         # Obtener outfit de la base de datos
         season = colorimetry_result['season']
         
-        # USAR LOS COLORES DE LA PALETA DE COLORIMETRÍA (no hardcodeado)
+        # USAR LOS COLORES DE LA PALETA DE COLORIMETRÍA
         palette_colors = colorimetry_result.get('palette_names', [])
-        print(f"🎨 Usando paleta de {season}: {', '.join(palette_colors[:4])}")
+        print(f" Usando paleta de {season}: {', '.join(palette_colors[:4])}")
         
         # Obtener armario del usuario
         wardrobe = WardrobeManager(user_email)
         user_items = wardrobe.get_all_items()
         
         # GENERACIÓN INTELIGENTE DE OUTFIT
-        print(f"👔 Generando outfit inteligente...")
+        print(f" Generando outfit inteligente...")
         print(f"   - Prendas del usuario disponibles: {len(user_items)}")
         print(f"   - Ocasión: {data.get('ocasion', 'casual')}")
         print(f"   - Clima: {clima_cat} ({clima_info.get('temperatura')}°C)")
@@ -681,10 +674,10 @@ def onboarding():
         )
         
         outfit_source = "user" if any(item.get('id', '').startswith('item_') for item in outfit_items.values()) else "database"
-        print(f"✅ Outfit generado desde: {outfit_source}")
+        print(f" Outfit generado desde: {outfit_source}")
         
         # Generar narrativa completa (para voz)
-        print("🎬 Generando recomendación narrativa...")
+        print(" Generando recomendación narrativa...")
         outfit_result = outfit_generator.generate_outfit_complete(
             user_data=data,
             clima_info=clima_info,
@@ -914,24 +907,24 @@ def dashboard_stats():
 
 if __name__ == '__main__':
     print("=" * 60)
-    print("🎨 ARMARIO INTELIGENTE - Servidor PROFESIONAL v2.0")
+    print(" ARMARIO INTELIGENTE - Servidor PROFESIONAL v2.0")
     print("=" * 60)
-    print("✅ Analizador de colorimetría: ACTIVO")
-    print("✅ Generador de narrativas: ACTIVO")
-    print("✅ Base de datos de prendas: ACTIVO")
-    print("✅ Sistema de autenticación: ACTIVO")
-    print("✅ Sistema de historial: ACTIVO")
-    print("✅ Colorimetría guardada: ACTIVO")
+    print(" Analizador de colorimetría: ACTIVO")
+    print(" Generador de narrativas: ACTIVO")
+    print(" Base de datos de prendas: ACTIVO")
+    print(" Sistema de autenticación: ACTIVO")
+    print(" Sistema de historial: ACTIVO")
+    print(" Colorimetría guardada: ACTIVO")
     
     if load_clima_data() is not None:
-        print("✅ Datos de clima: CARGADOS")
+        print(" Datos de clima: CARGADOS")
     else:
-        print("⚠️ Datos de clima: NO DISPONIBLES")
+        print(" Datos de clima: NO DISPONIBLES")
     
-    print(f"✅ Prendas en base de datos: {sum(len(items) for items in clothing_db.items.values())}")
+    print(f" Prendas en base de datos: {sum(len(items) for items in clothing_db.items.values())}")
     
     print("=" * 60)
-    print("🌐 Accede a: http://localhost:5003")
+    print(" Accede a: http://localhost:5003")
     print("=" * 60)
     
     app.run(debug=True, port=5003)
