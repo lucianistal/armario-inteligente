@@ -1,0 +1,53 @@
+{
+  "saved_at": "2025-11-27T19:01:23.663754",
+  "colorimetry_result": {
+    "season": "Otoño",
+    "skin_tone": "warm",
+    "skin_lightness": 168,
+    "skin_lab": {
+      "L": 168,
+      "a": 137,
+      "b": 145
+    },
+    "eye_color": {
+      "category": "avellana",
+      "hue": 52,
+      "saturation": 43,
+      "value": 84
+    },
+    "hair_color": {
+      "category": "castaño oscuro",
+      "hue": 33,
+      "saturation": 30,
+      "value": 59
+    },
+    "contrast": "medium",
+    "saturation": "low",
+    "palette": [
+      "#8B4513",
+      "#FF8C00",
+      "#556B2F",
+      "#F5DEB3",
+      "#CD853F",
+      "#A0522D",
+      "#DC143C",
+      "#B8860B"
+    ],
+    "palette_description": "Tonos tierra y cálidos (marrones, naranjas, verdes oliva, beige, rojo, bronce)",
+    "palette_names": [
+      "marrón",
+      "naranja",
+      "verde oliva",
+      "beige cálido",
+      "rojo",
+      "bronce"
+    ],
+    "confidence": 0.9,
+    "detailed_analysis": {
+      "skin": "Subtono warm",
+      "eyes": "Ojos avellana",
+      "hair": "Cabello castaño oscuro",
+      "conclusion": "Clasificación: Otoño"
+    }
+  }
+}

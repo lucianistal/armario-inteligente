@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Outfit Perfecto - Armario Inteligente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .results-hero {
+            background: linear-gradient(135deg, #9B7EBD 0%, #C8A2E0 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(155, 126, 189, 0.3);
+        }
+        
+        .results-hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .outfit-visual {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .outfit-summary {
+            background: linear-gradient(135deg, #F3EBF9, #FAF8FC);
+            border: 2px solid rgba(155, 126, 189, 0.2);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .outfit-text-simple {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+        }
+        
+        .info-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        /* CRÍTICO: Estilos de paleta de colores */
+        .color-palette {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        
+        .color-swatch {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 3px solid white;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        
+        .color-swatch:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+        
+        .color-name {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        
+        .palette-description {
+            text-align: center;
+            color: var(--text-dark);
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .audio-player {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .play-button {
+            background: linear-gradient(135deg, var(--accent-purple), #C8A2E0);
+            color: white;
+            border: none;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 32px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(155, 126, 189, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .play-button:hover {
+            transform: scale(1.1);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #FAFAFA, #F5F5F5);
+            border-radius: 12px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .info-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="results-container">
+        <!-- Navbar -->
+        <div class="navbar">
+            <div class="nav-logo">Armario Inteligente</div>
+            <div>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Inicio</a>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar sesión</a>
+            </div>
+        </div>
+        
+        <div class="results-content">
+            <!-- Hero Section -->
+            <div class="results-hero">
+                <h1>Tu Outfit Perfecto</h1>
+                <p>Personalizado según tu colorimetría y el clima</p>
+            </div>
+            
+            <!-- Outfit Visual -->
+            <div class="outfit-visual">
+                <h2 style="text-align: center; font-size: 32px; margin-bottom: 32px; color: var(--text-dark);">
+                    Tu Look Recomendado
+                </h2>
+                
+                <!-- Outfit Simplificado -->
+                <div class="outfit-summary">
+                    <h3>Resumen del Outfit</h3>
+                    <div class="outfit-text-simple">
+                        {{ data.outfit_simple or "Cargando..." }}
+                    </div>
+                </div>
+                
+                <!-- Galería de Imágenes del Outfit -->
+                {% if data.outfit_items %}
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-top: 32px;">
+                    {% for tipo, prenda in data.outfit_items.items() %}
+                    <div style="background: #FAFAFA; border-radius: 16px; padding: 20px; text-align: center;">
+                        {% if prenda.imagen %}
+                            {% if prenda.id and prenda.id.startswith('item_') %}
+                                <!-- Imagen del usuario -->
+                                <img src="{{ url_for('static', filename='user_clothing/' + prenda.imagen) }}" 
+                                     alt="{{ prenda.nombre }}" 
+                                     style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 12px;">
+                            {% else %}
+                                <!-- Imagen de la base de datos -->
+                                <img src="{{ url_for('static', filename='clothing_images/' + prenda.imagen) }}" 
+                                     alt="{{ prenda.nombre }}" 
+                                     style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 12px;">
+                            {% endif %}
+                        {% else %}
+                            <!-- Placeholder si no hay imagen -->
+                            <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #E8E0F5, #F5F3F7); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                                <span style="font-size: 48px; color: #9B7EBD;">👕</span>
+                            </div>
+                        {% endif %}
+                        <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 4px;">
+                            {{ prenda.nombre }}
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">
+                            {{ tipo }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Paleta de Colores - CORREGIDA -->
+            <div class="info-section">
+                <h3>Tu Paleta Recomendada</h3>
+                <p class="palette-description">
+                    {{ data.get('palette_description', 'Colores que te favorecen según tu colorimetría') }}
+                </p>
+                <div class="color-palette">
+                    {% if data.paleta %}
+                        {% for color in data.paleta %}
+                        <div class="color-swatch" data-color="{{ color }}"></div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: #999;">No se pudo generar paleta</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Reproductor de Audio -->
+            {% if data.audio_url %}
+            <div class="audio-player">
+                <h3>Escucha tu Recomendación Personalizada</h3>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">
+                    Reproducción con explicación detallada
+                </p>
+                <button class="play-button" onclick="toggleAudio()">
+                    <i class="fas fa-play" id="audioIcon"></i>
+                </button>
+                <audio id="audioPlayer" src="{{ data.audio_url }}"></audio>
+                <p id="audioStatus" style="margin-top: 16px; color: var(--text-muted);"></p>
+            </div>
+            {% endif %}
+            
+            <!-- Información del Perfil -->
+            <div class="info-section">
+                <h3>Detalles de tu Perfil</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Colorimetría</div>
+                        <div class="info-value">{{ data.get('colorimetria', 'N/A') }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Temperatura</div>
+                        <div class="info-value">{{ data.get('temperatura', '--') }}°C</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Prob. Lluvia</div>
+                        <div class="info-value">{{ data.get('prob_lluvia', '--') }}%</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Ubicación</div>
+                        <div class="info-value">{{ data.get('clima', '').split(',')[0] if data.get('clima') else 'N/A' }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Ocasión</div>
+                        <div class="info-value">{{ data.get('ocasion', 'N/A') }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Preferencia</div>
+                        <div class="info-value">{{ data.get('preferencia', 'N/A') }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Acciones -->
+            <div class="results-actions">
+                <button onclick="window.print()" class="btn btn-secondary">
+                    Imprimir
+                </button>
+                <a href="{{ url_for('recommendation') }}" class="btn btn-primary">
+                    Nueva Consulta
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Aplicar colores de la paleta
+        document.querySelectorAll('.color-swatch[data-color]').forEach(swatch => {
+            swatch.style.backgroundColor = swatch.getAttribute('data-color');
+        });
+        
+        const audio = document.getElementById('audioPlayer');
+        const playButton = document.querySelector('.play-button');
+        const audioIcon = document.getElementById('audioIcon');
+        const audioStatus = document.getElementById('audioStatus');
+        
+        function toggleAudio() {
+            if (!audio) return;
+            
+            if (audio.paused) {
+                audio.play();
+                audioIcon.className = 'fas fa-pause';
+                playButton.classList.add('playing');
+                audioStatus.textContent = 'Reproduciendo...';
+            } else {
+                audio.pause();
+                audioIcon.className = 'fas fa-play';
+                playButton.classList.remove('playing');
+                audioStatus.textContent = 'Pausado';
+            }
+        }
+        
+        if (audio) {
+            audio.addEventListener('ended', () => {
+                audioIcon.className = 'fas fa-play';
+                playButton.classList.remove('playing');
+                audioStatus.textContent = 'Reproducción finalizada';
+            });
+        }
+    </script>
+</body>
+</html>

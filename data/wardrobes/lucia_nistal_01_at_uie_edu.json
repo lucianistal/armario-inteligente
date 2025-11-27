@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "nombre": "Vestido blanco",
+      "tipo": "vestido",
+      "color": [
+        "blanco",
+        "negro"
+      ],
+      "ocasion": [
+        "formal",
+        "casual"
+      ],
+      "clima_apropiado": [
+        "calor",
+        "templado"
+      ],
+      "fit": "normal",
+      "imagen": "lucia.nistal.01uie.edu_1764112332.299346_Imagen_24-11-25_a_las_6.14_p._m..png",
+      "id": "item_1764112332303",
+      "added_at": "2025-11-26T00:12:12.303190"
+    }
+  ],
+  "created_at": "2025-11-24T16:05:13.298180"
+}
