@@ -403,17 +403,17 @@ class ClothingDatabase:
 if __name__ == "__main__":
     db = ClothingDatabase()
     
-    print("✅ Base de datos creada con éxito!")
-    print(f"\n📊 Estadísticas:")
+    print(" Base de datos creada con éxito!")
+    print(f"\n Estadísticas:")
     for tipo, items in db.items.items():
         print(f"   {tipo}: {len(items)} prendas")
     
-    print("\n🔍 Prueba de búsqueda - Prendas casuales para calor:")
+    print("\n Prueba de búsqueda - Prendas casuales para calor:")
     results = db.search_items(ocasion='casual', clima='calor')
     for item in results[:3]:
         print(f"   - {item['nombre']} ({item['tipo']})")
     
-    print("\n👗 Outfit sugerido para evento formal en verano:")
+    print("\n Outfit sugerido para evento formal en verano:")
     outfit = db.get_outfit_suggestion(
         ocasion='formal',
         clima='calor',
