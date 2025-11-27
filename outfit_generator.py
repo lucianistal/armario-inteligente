@@ -35,7 +35,7 @@ class OutfitGenerator:
         }
 
     # =========================
-    # NUEVO: asegurar prendas obligatorias
+    # Asegurar prendas obligatorias
     # =========================
     def ensure_complete_outfit(self, outfit_items, genero='mujer'):
         es_mujer = 'mujer' in genero.lower()
@@ -67,7 +67,7 @@ class OutfitGenerator:
         return outfit_items
 
     # =========================
-    # NUEVO: descripción de prenda con artículo según género y plural
+    # Descripción de prenda con artículo según género y plural
     # =========================
     def _get_prenda_descripcion(self, prenda, genero='mujer'):
         if isinstance(prenda, dict):
@@ -124,10 +124,10 @@ class OutfitGenerator:
         # Aseguramos prendas obligatorias
         outfit_items = self.ensure_complete_outfit(outfit_items, user_data.get('genero', 'mujer'))
 
-        # 1️⃣ GENERAR OUTFIT SIMPLE
+        #  GENERAR OUTFIT SIMPLE
         outfit_simple = self._generate_outfit_simple(outfit_items, user_data.get('genero', 'mujer'))
         
-        # 2️⃣ GENERAR NARRATIVA
+        #  GENERAR NARRATIVA
         outfit_narrative = self._generate_outfit_narrative(
             outfit_items=outfit_items,
             user_data=user_data,
@@ -346,5 +346,5 @@ class OutfitGenerator:
                     }
                 }
             }
-        }  # esta llave cierra el diccionario generic_outfits
+        }  
         return generic_outfits.get(ocasion, generic_outfits['casual']).get(gender_key, {}).get(temp_cat, {})
